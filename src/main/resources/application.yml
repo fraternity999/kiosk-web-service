@@ -1,2 +1,10 @@
+# Application Name
+  # logging path
+spring:
+  application:
+    name: kiosk
 server:
   port: 8090
+logging:
+  file:
+    path: ./logs
