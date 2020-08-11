@@ -6,10 +6,9 @@
 :toc: left
 :toc-title: 自助机接口程序目录
 
-[[example_curl_request]]
 == 充值
 
 .http-request
-include::{snippets}\index\http-request.adoc[]
+//include::{snippets}\index\http-request.adoc[]
 .request-parameters 请求参数说明
-include::{snippets}\index\http-response.adoc[]
+//include::{snippets}\index\http-response.adoc[]
