@@ -1,0 +1,15 @@
+= 接口文档
+:author: 李晋
+:email: 317395616@qq.com
+:revnumber: v1.0
+:revdate: 2020-07-13
+:toc: left
+:toc-title: 自助机接口程序目录
+
+[[example_curl_request]]
+== 充值
+
+.http-request
+include::{snippets}\index\http-request.adoc[]
+.request-parameters 请求参数说明
+include::{snippets}\index\http-response.adoc[]
