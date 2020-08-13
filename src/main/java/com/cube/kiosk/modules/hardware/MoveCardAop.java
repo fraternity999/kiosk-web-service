@@ -10,26 +10,30 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * 移动卡
+ * @author 李晋
+ */
 @Component
 @Aspect
-@Order(1)
-public class AllowCardInAop {
+@Order(3)
+public class MoveCardAop {
 
-    @Around(value = "@annotation(com.cube.kiosk.modules.hardware.AllowCardIn)")
+    @Around(value = "@annotation(com.cube.kiosk.modules.hardware.MoveCard)")
     public Object doBefore(ProceedingJoinPoint proceedingJoinPoint){
         Object object = null;
 
         try {
             RestTemplate restTemplate = new RestTemplate();
-            String result = restTemplate.getForObject("http://localhost:50047/api/allowcardin",String.class);
+            String result = restTemplate.getForObject("http://localhost:50047/api/MoveCardToRf",String.class);
             if(result.indexOf("SUCCESS")>0){
                 object = proceedingJoinPoint.proceed();
             }else{
                 ResponseData responseData = ResponseDatabase.newResponseData();
                 responseData.setCode(500);
                 responseData.setData(null);
-                responseData.setType("AllowCardIn");
-                responseData.setMessage("允许进卡失败");
+                responseData.setType("MoveCard");
+                responseData.setMessage("移动卡失败");
                 object = responseData;
             }
         } catch (Throwable throwable) {

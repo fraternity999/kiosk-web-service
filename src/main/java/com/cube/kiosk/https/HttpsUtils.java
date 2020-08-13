@@ -1,13 +1,20 @@
 package com.cube.kiosk.https;
 
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Demo class
+ *
+ * @author 李晋
+ * @date 2020/08/12
+ */
 public class HttpsUtils {
 
-    public String doPost(String method, Map<String,Object> result) throws Exception {
+    public static String doPost(String method, Map<String,Object> result) throws Exception {
         String url = "https://wit120.neofaith.net:18443/services/his/"+method;
         String charset = "utf-8";
 
@@ -15,7 +22,7 @@ public class HttpsUtils {
         String token = "1514c1367ae748349f31de28aef9b1ca";
         String hosId = "46c0cd66b25b4da8acbab30bd501a64c";
         String spellNo = "am";
-        Map<String,Object> requestJson = new HashMap<String, Object>();
+        Map<String,Object> requestJson = Maps.newHashMap();
         result.put("token", token);
         result.put("hosId", hosId);
         Gson gson = new Gson();
