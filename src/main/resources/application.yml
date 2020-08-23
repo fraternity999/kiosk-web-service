@@ -8,3 +8,6 @@ server:
 logging:
   file:
     path: ./logs
+
+neofaith:
+  url: https://wit120.neofaith.net:18443/services/his/

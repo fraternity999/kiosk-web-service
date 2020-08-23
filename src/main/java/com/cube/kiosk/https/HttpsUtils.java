@@ -14,10 +14,8 @@ import java.util.Map;
  */
 public class HttpsUtils {
 
-    public static String doPost(String method, Map<String,Object> result) throws Exception {
-        String url = "https://wit120.neofaith.net:18443/services/his/"+method;
+    public static String doPost(String url, Map<String,Object> result) throws Exception {
         String charset = "utf-8";
-
         SSLClient sslClient = new SSLClient();
         String token = "1514c1367ae748349f31de28aef9b1ca";
         String hosId = "46c0cd66b25b4da8acbab30bd501a64c";

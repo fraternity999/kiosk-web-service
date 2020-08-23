@@ -3,6 +3,7 @@ package com.cube.kiosk.modules.recharge.service.impl;
 import com.cube.kiosk.https.HttpsUtils;
 import com.cube.kiosk.modules.recharge.service.RechargeService;
 import com.google.common.collect.Maps;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -13,18 +14,14 @@ import java.util.Map;
 @Service
 public class RechargeServiceImpl implements RechargeService {
 
+    @Value("${neofaith.url}")
+    private String url;
+
     @Override
-    public String getQrCode(Double money) {
-        String result = "";
-        try {
-            result = HttpsUtils.doPost("a", Maps.newHashMap());
-        } catch (Exception e) {
+    public String getQrCode(Double money) throws Exception {
 
-        } finally {
-
-           return result;
-
-        }
+        String result = HttpsUtils.doPost("http://127.0.0.1:8090/comlink-interface-abc-forward/comlink/pay", Maps.newHashMap());
+        return result;
     }
 
     /**
@@ -34,19 +31,12 @@ public class RechargeServiceImpl implements RechargeService {
      * @return
      */
     @Override
-    public String getPatientInfo(String cardId) {
-        String result = "";
-        try {
-            Map<String,Object> map = Maps.newHashMap();
-            map.put("cardId",cardId);
-            result = HttpsUtils.doPost("getPatientnameInfo", map);
-        } catch (Exception e) {
+    public String getPatientInfo(String cardId) throws Exception {
 
-        } finally {
-
-            return result;
-
-        }
+        Map<String,Object> map = Maps.newHashMap();
+        map.put("cardId",cardId);
+        String result = HttpsUtils.doPost(url+"getPatientnameInfo", map);
+        return result;
     }
 
 

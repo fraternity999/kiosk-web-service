@@ -21,6 +21,7 @@
         <spring.restdocs.mockmvc.varsion>2.0.4.RELEASE</spring.restdocs.mockmvc.varsion>
         <guava.varsion>29.0-jre</guava.varsion>
         <lombok.version>1.18.12</lombok.version>
+        <dom4j.version>1.6.1</dom4j.version>
     </properties>
 
     <dependencies>
@@ -98,6 +99,19 @@
             <scope>provided</scope>
         </dependency>
 
+
+        <!-- https://mvnrepository.com/artifact/dom4j/dom4j -->
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>${dom4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -3,6 +3,8 @@ package com.cube.kiosk.modules.hardware;
 import com.cube.kiosk.modules.common.ResponseData;
 import com.cube.kiosk.modules.common.ResponseDatabase;
 import com.cube.kiosk.modules.common.model.PatientInfo;
+import com.cube.kiosk.modules.hardware.utils.IpUtil;
+import com.cube.kiosk.modules.hardware.utils.RestTemplateUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -19,13 +21,20 @@ import org.springframework.web.client.RestTemplate;
 @Order(2)
 public class CheckCardAop {
 
+    private String inPutParam = "<invoke name=\" READCARDTESTINSERTCARD \">\n" +
+            "<arguments>\n" +
+            "</arguments>\n" +
+            "</invoke>";
+
     @Around(value = "@annotation(com.cube.kiosk.modules.hardware.CheckCard)")
     public Object doBefore(ProceedingJoinPoint proceedingJoinPoint){
         Object object = null;
-
+        String ip = IpUtil.getRemoteAddr(proceedingJoinPoint);
+        if("127.0.0.1".equalsIgnoreCase(ip)){
+            ip = "localhost";
+        }
         try {
-            RestTemplate restTemplate = new RestTemplate();
-            String result = restTemplate.getForObject("http://localhost:50047/api/TestCard",String.class);
+            String result = RestTemplateUtil.post(ip,inPutParam);
             if(result.indexOf("1")>0){
                 object = proceedingJoinPoint.proceed();
             }else{
