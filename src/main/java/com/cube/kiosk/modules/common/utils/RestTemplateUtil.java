@@ -1,10 +1,14 @@
 package com.cube.kiosk.modules.common.utils;
 
+import com.google.common.collect.Maps;
+import org.springframework.cglib.beans.BeanMap;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
 
 public class RestTemplateUtil {
 
@@ -18,5 +22,21 @@ public class RestTemplateUtil {
         HttpEntity<MultiValueMap<String, Object>> r = new HttpEntity<>(postParameters, headers);
         String result = restTemplate.postForObject(url,r,String.class);
         return result;
+    }
+
+    /**
+     * 将对象装换为map
+     * @param bean
+     * @return
+     */
+    public static <T> Map<String, Object> beanToMap(T bean) {
+        Map<String, Object> map = Maps.newHashMap();
+        if (bean != null) {
+            BeanMap beanMap = BeanMap.create(bean);
+            for (Object key : beanMap.keySet()) {
+                map.put(key+"", beanMap.get(key));
+            }
+        }
+        return map;
     }
 }

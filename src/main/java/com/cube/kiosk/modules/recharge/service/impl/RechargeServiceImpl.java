@@ -1,8 +1,15 @@
 package com.cube.kiosk.modules.recharge.service.impl;
 
 import com.cube.kiosk.https.HttpsUtils;
+import com.cube.kiosk.modules.common.ResponseBank;
+import com.cube.kiosk.modules.common.ResultData;
+import com.cube.kiosk.modules.common.model.PatientInfo;
+import com.cube.kiosk.modules.common.utils.RestTemplateUtil;
+import com.cube.kiosk.modules.recharge.linstener.RechargeLinstener;
 import com.cube.kiosk.modules.recharge.service.RechargeService;
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +32,33 @@ public class RechargeServiceImpl implements RechargeService {
     }
 
     /**
+     * 查询消费订单
+     *
+     * @param tradeNo ：支付订单号
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public void getConsumer0rder(String tradeNo, RechargeLinstener linstener){
+        Map<String,Object> map = Maps.newHashMap();
+        map.put("tradeNo", tradeNo);//支付订单号
+        try{
+            String result = HttpsUtils.doPost("http://127.0.0.1:8090/comlink-interface-abc-forward/comlink/pay", map);
+        }catch (Exception e){
+            linstener.exception(e.getMessage());
+        }
+
+
+    }
+
+    /**
      * 查询患者基本信息
      *
      * @param cardId
      * @return
      */
     @Override
-    public String getPatientInfo(String cardId) throws Exception {
+    public String getPatientnameInfo(String cardId) throws Exception {
 
         Map<String,Object> map = Maps.newHashMap();
         map.put("cardId",cardId);
@@ -39,5 +66,159 @@ public class RechargeServiceImpl implements RechargeService {
         return result;
     }
 
+    /**
+     * 在线建卡
+     * @param patientInfo
+     * @param linstener
+     */
+    @Override
+    public void cardIssuers(PatientInfo patientInfo, RechargeLinstener linstener) {
+        try {
+            Map<String,Object> map =RestTemplateUtil.beanToMap(patientInfo);
+            String result = HttpsUtils.doPost(url+"cardIssuers", map);
+            Gson gson = new Gson();
+            ResultData<PatientInfo> patientInfoResultData = gson.fromJson(result, new TypeToken<ResultData<PatientInfo>>(){}.getType());
+            if(patientInfoResultData.getCode()==0){
+                linstener.success("建卡成功");
+            }else {
+                linstener.error("建卡失败,请联系管理员");
+            }
+        }catch (Exception e){
+            linstener.exception(e.getMessage());
+        }
+    }
+
+    /**
+     * 查询就在卡余额
+     *
+     * @param patientName
+     * @param identitycard
+     * @param linstener
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public void getBalance(String patientName, String identitycard, RechargeLinstener linstener){
+       try {
+           Map<String,Object> map = Maps.newHashMap();
+           map.put("identitycard", identitycard);//就诊卡号
+           map.put("patientName", patientName);//患者姓名
+           String result = HttpsUtils.doPost(url+"getBalance", map);
+           Gson gson = new Gson();
+           ResultData<PatientInfo> patientInfoResultData = gson.fromJson(result, new TypeToken<ResultData<PatientInfo>>(){}.getType());
+           if(patientInfoResultData.getCode()==0){
+               linstener.success(patientInfoResultData.getResponseData().getBalance());
+           }else {
+               linstener.error("查询余额失败");
+           }
+       }catch (Exception e){
+           linstener.exception(e.getMessage());
+       }
+    }
+
+    /**
+     * 就诊卡充值
+     * @param patientInfo 患者基础信息
+     * @param responseBank 支付基础信息
+     * @param linstener
+     */
+    @Override
+    public void payMedicalCard(PatientInfo patientInfo, ResponseBank responseBank, RechargeLinstener linstener) {
+
+        try {
+            Map<String,Object> map =RestTemplateUtil.beanToMap(patientInfo);
+            map.put("money", responseBank.getTxnAmt());//充值金额
+            map.put("modeType", responseBank.getPayType());//充值方式
+            //支付成功流水号-支付订单号、后期待确定
+            map.put("serialNumber", responseBank.getTradeNo());
+            map.put("payDate", responseBank.getTxnTime());//支付时间
+            String result = HttpsUtils.doPost(url+"payMedicalCard", map);
+            Gson gson = new Gson();
+            ResultData<PatientInfo> patientInfoResultData = gson.fromJson(result, new TypeToken<ResultData<PatientInfo>>(){}.getType());
+            if(patientInfoResultData.getCode()==0){
+                //支付成功返回余额
+                linstener.success(patientInfoResultData.getResponseData().getBalance());
+            }else {
+                linstener.error("HIS卡充值失败！请联系管理员");
+            }
+        }catch (Exception e){
+            linstener.exception(e.getMessage());
+        }
+    }
+
+    /**
+     *查询住院患者基本新
+     * @param inHosid:住院号
+     * @param linstener
+     */
+    @Override
+    public void getPatientInfo(String inHosid, RechargeLinstener linstener) {
+        try {
+            Map<String,Object> map = Maps.newHashMap();
+            map.put("inHosid", inHosid);//住院号
+            String result = HttpsUtils.doPost(url+"getPatientInfo", map);
+            Gson gson = new Gson();
+            ResultData<PatientInfo> patientInfoResultData = gson.fromJson(result, new TypeToken<ResultData<PatientInfo>>(){}.getType());
+            if(patientInfoResultData.getCode()==0){
+                linstener.success(patientInfoResultData.getResponseData().getBalance());
+            }else {
+                linstener.error("查询住院患者失败");
+            }
+        }catch (Exception e){
+            linstener.exception(e.getMessage());
+        }
+    }
+
+    /**
+     * 查询住院预交金余额
+     * @param inHosid:住院号
+     * @param linstener
+     */
+    @Override
+    public void paymenPrepaidBalance(String inHosid, RechargeLinstener linstener) {
+        try {
+            Map<String,Object> map = Maps.newHashMap();
+            map.put("inHosid", inHosid);//住院号
+            String result = HttpsUtils.doPost(url+"paymenPrepaidBalance", map);
+            Gson gson = new Gson();
+            ResultData<Double> patientInfoResultData = gson.fromJson(result, new TypeToken<ResultData<Double>>(){}.getType());
+            if(patientInfoResultData.getCode()==0){
+                linstener.success(patientInfoResultData.getResponseData());
+            }else {
+                linstener.error("查询预交金余额失败");
+            }
+        }catch (Exception e){
+            linstener.exception(e.getMessage());
+        }
+    }
+
+    /**
+     * 住院预交金充值
+     * @param patientInfo
+     * @param responseBank
+     * @param linstener
+     */
+    @Override
+    public void paymenPrepaid(PatientInfo patientInfo, ResponseBank responseBank, RechargeLinstener linstener) {
+        try {
+            Map<String,Object> map =RestTemplateUtil.beanToMap(patientInfo);
+            map.put("money", responseBank.getTxnAmt());//充值金额
+            map.put("modeType", responseBank.getPayType());//充值方式
+            //支付成功流水号-支付订单号、后期待确定
+            map.put("serialNumber", responseBank.getTradeNo());
+            map.put("payDate", responseBank.getTxnTime());//支付时间
+            String result = HttpsUtils.doPost(url+"paymenPrepaid", map);
+            Gson gson = new Gson();
+            ResultData<PatientInfo> patientInfoResultData = gson.fromJson(result, new TypeToken<ResultData<PatientInfo>>(){}.getType());
+            if(patientInfoResultData.getCode()==0){
+                //支付成功返回余额
+                linstener.success(patientInfoResultData.getResponseData().getBalance());
+            }else {
+                linstener.error("HIS卡充值失败！请联系管理员");
+            }
+        }catch (Exception e){
+            linstener.exception(e.getMessage());
+        }
+    }
 
 }

@@ -11,3 +11,6 @@ logging:
 
 neofaith:
   url: https://wit120.neofaith.net:18443/services/his/
+
+
+app-pay:
