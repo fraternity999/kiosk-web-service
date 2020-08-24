@@ -8,6 +8,7 @@ import com.cube.kiosk.modules.hardware.AllowCardIn;
 import com.cube.kiosk.modules.hardware.CheckCard;
 import com.cube.kiosk.modules.hardware.MoveCard;
 import com.cube.kiosk.modules.hardware.ReadCard;
+import com.cube.kiosk.modules.recharge.linstener.RechargeLinstener;
 import com.cube.kiosk.modules.recharge.service.RechargeService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -25,27 +26,44 @@ public class RechargeController {
     @Autowired
     private RechargeService rechargeService;
 
-//    @AllowCardIn
-//    @CheckCard
-//    @MoveCard
+    //@AllowCardIn
+    //@CheckCard
+    //@MoveCard
     @ReadCard
     @RequestMapping("index")
     public ResponseData<PatientInfo> index(String cardId, HttpServletRequest request){
         String result = null;
         ResponseData<PatientInfo> responseData = ResponseDatabase.newResponseData();
         try {
+            //查询患者信息
             result = rechargeService.getPatientInfo(cardId);
+
             Gson gson = new Gson();
             ResultData<PatientInfo> patientInfoResultData = gson.fromJson(result, new TypeToken<ResultData<PatientInfo>>(){}.getType());
-            if(patientInfoResultData.getCode()==0){
-                responseData.setCode(200);
-                responseData.setData(patientInfoResultData.getResponseData());
-                responseData.setMessage("成功");
-            }else {
-                responseData.setCode(500);
-                responseData.setData(null);
-                responseData.setMessage("查询患者信息失败");
-            }
+            //查询卡余额 Patientname:患者形象;  就诊卡号
+            rechargeService.getBalance(patientInfoResultData.getResponseData().getPatientname(), null, new RechargeLinstener() {
+                @Override
+                public void success(Object object) {
+                    patientInfoResultData.getResponseData().setBalance((Double)object);
+                    responseData.setCode(200);
+                    responseData.setData(patientInfoResultData.getResponseData());
+                    responseData.setMessage("成功");
+                }
+
+                @Override
+                public void error(Object object) {
+                    responseData.setCode(500);
+                    responseData.setData(null);
+                    responseData.setMessage("查询患者信息失败");
+                }
+
+                @Override
+                public void exception(Object object) {
+                    responseData.setCode(500);
+                    responseData.setData(null);
+                    responseData.setMessage("查询患者信息失败");
+                }
+            });
         } catch (Exception e) {
             responseData.setCode(500);
             responseData.setData(null);
@@ -65,6 +83,11 @@ public class RechargeController {
         return cardNo;
     }
 
+    /**
+     *主扫下单
+     * @param money
+     * @return
+     */
     @GetMapping("qrCode")
     public String getQrCode(Double money){
         String result = "";
@@ -77,6 +100,36 @@ public class RechargeController {
         }
     }
 
+    /**
+     *消费订单查询
+     * @param tradeNo
+     * @return
+     */
+    @GetMapping("qrCon0rder")
+    public String querConsumer0rder(String tradeNo){
+        String result = "";
+        try {
+            result = rechargeService.getConsumer0rder(tradeNo, new RechargeLinstener() {
+                @Override
+                public void success(Object object) {
 
+                }
+
+                @Override
+                public void error(Object object) {
+
+                }
+
+                @Override
+                public void exception(Object object) {
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            return result;
+        }
+    }
 
 }

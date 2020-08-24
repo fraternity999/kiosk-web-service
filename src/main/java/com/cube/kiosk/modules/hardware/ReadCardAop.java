@@ -41,8 +41,8 @@ public class ReadCardAop {
             ip = "localhost";
         }
         try {
-            String result = RestTemplateUtil.post(ip,inPutParam);
-            result = "<return name=\" READCARDREADRFCARD \">\n" +
+//            String result = RestTemplateUtil.post(ip,inPutParam);
+            String result = "<return name=\" READCARDREADRFCARD \">\n" +
                     "<arguments>\n" +
                     "<string id=\"ERROR\">SUCCESS</string>\n" +
                     "<string id=\"CARDNO\">12345678</string>\n" +
