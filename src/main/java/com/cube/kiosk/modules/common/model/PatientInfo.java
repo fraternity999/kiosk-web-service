@@ -9,6 +9,8 @@ import lombok.Data;
 @Data
 public class PatientInfo {
 
+
+
     @SerializedName("patientname")
     private String name;
 
