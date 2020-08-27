@@ -32,6 +32,8 @@ public class PatientInfo {
 
     private String registeredAddress;//户口地址
 
+
+
     private String sickType;//费用类别
 
     private String employment;//职业
