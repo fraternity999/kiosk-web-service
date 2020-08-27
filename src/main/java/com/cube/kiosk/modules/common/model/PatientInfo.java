@@ -11,6 +11,12 @@ public class PatientInfo {
 
 
 
+
+
+
+
+
+
     @SerializedName("patientname")
     private String name;
 
