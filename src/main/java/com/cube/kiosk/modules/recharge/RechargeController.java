@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("recharge")
+@RequestMapping("api/recharge")
 public class RechargeController {
 
     @Autowired
