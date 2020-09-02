@@ -3,8 +3,12 @@
 spring:
   application:
     name: kiosk
+#  activemq:
+#    broker-url: tcp://127.0.0.1:61616
+#    user: admin
+#    password: admin
 server:
-  port: 8090
+  port: 8099
 logging:
   file:
     path: ./logs
@@ -14,3 +18,5 @@ neofaith:
 
 
 app-pay:
+
+

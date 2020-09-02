@@ -15,6 +15,8 @@ import org.springframework.web.context.WebApplicationContext;
 //静态导入
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
@@ -42,9 +44,11 @@ public class KioskApplicationTests {
     }
     @Test
     public void contextLoads() throws Exception {
-        this.mockMvc.perform(get("/recharge/test").accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(get("/recharge/index").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(document("index"));
+                .andDo(document("index",links(
+                        linkWithRel("alpha").description("Link to the alpha resource"),
+                        linkWithRel("bravo").description("Link to the bravo resource"))));
     }
 
 }

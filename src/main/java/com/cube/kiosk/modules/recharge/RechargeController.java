@@ -27,9 +27,9 @@ public class RechargeController {
     @Autowired
     private RechargeService rechargeService;
 
-    //@AllowCardIn
-    //@CheckCard
-    //@MoveCard
+    @AllowCardIn
+    @CheckCard
+    @MoveCard
     @ReadCard
     @RequestMapping("index")
     public ResponseData<PatientInfo> index(String cardId, HttpServletRequest request){

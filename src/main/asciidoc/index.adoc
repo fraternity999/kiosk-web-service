@@ -8,7 +8,15 @@
 
 == 充值
 
+.curl-request
+include::{snippets}\index\curl-request.adoc[]
 .http-request
-//include::{snippets}\index\http-request.adoc[]
-.request-parameters 请求参数说明
-//include::{snippets}\index\http-response.adoc[]
+include::{snippets}\index\http-request.adoc[]
+.http-response
+include::{snippets}\index\http-response.adoc[]
+.httpie-request
+include::{snippets}\index\httpie-request.adoc[]
+.request-body
+include::{snippets}\index\request-body.adoc[]
+.response-body
+include::{snippets}\index\response-body.adoc[]

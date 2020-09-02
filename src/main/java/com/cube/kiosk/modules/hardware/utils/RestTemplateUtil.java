@@ -10,7 +10,7 @@ public class RestTemplateUtil {
 
     public static String post(String ip,String param){
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://"+ip+":50047/api/values";
+        String url = "http://"+ip+":50850/api/values";
         System.out.println(url);
         HttpHeaders headers = new HttpHeaders();
 //            MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");

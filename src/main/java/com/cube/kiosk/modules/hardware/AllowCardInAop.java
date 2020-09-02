@@ -1,47 +1,46 @@
 package com.cube.kiosk.modules.hardware;
 
+import com.cube.kiosk.activemq.Producer;
 import com.cube.kiosk.modules.common.ResponseData;
 import com.cube.kiosk.modules.common.ResponseDatabase;
-import com.cube.kiosk.modules.common.model.PatientInfo;
 import com.cube.kiosk.modules.hardware.utils.IpUtil;
-import com.cube.kiosk.modules.hardware.utils.RestTemplateUtil;
-import com.google.common.collect.Maps;
+import com.cube.kiosk.socket.SocketUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
+import java.net.Socket;
 
 @Component
 @Aspect
 @Order(1)
 public class AllowCardInAop {
 
+
+
+
+    @Autowired
+    private Producer producer;
+
     private String inPutParam = "<invoke name=\" READCARDALLOWCARDIN \">" +
             "<arguments>" +
-            "[<string id=”ONLY_MAG”>TRUE</string>]" +
             "</arguments>" +
             "</invoke>";
+
+    private String result = null;
 
     @Around(value = "@annotation(com.cube.kiosk.modules.hardware.AllowCardIn)")
     public Object doBefore(ProceedingJoinPoint proceedingJoinPoint){
         Object object = null;
-        String ip = IpUtil.getRemoteAddr(proceedingJoinPoint);
-        if("127.0.0.1".equalsIgnoreCase(ip)){
-            ip = "localhost";
-        }
-        try {
-            String result = RestTemplateUtil.post(ip,inPutParam);
+        try{
+            String ip = IpUtil.getRemoteAddr(proceedingJoinPoint);
+            Socket socket = SocketUtils.sendMessage("127.0.0.1",8888,inPutParam);
+            result = SocketUtils.reciveMessage(socket);
             if(result.indexOf("SUCCESS")>0){
                 object = proceedingJoinPoint.proceed();
             }else{
@@ -52,12 +51,20 @@ public class AllowCardInAop {
                 responseData.setMessage("允许进卡失败");
                 object = responseData;
             }
-        } catch (Exception throwable) {
-            System.out.println(throwable.getMessage());
+        } catch (Throwable throwable) {
+            ResponseData responseData = ResponseDatabase.newResponseData();
+            responseData.setCode(500);
+            responseData.setData(null);
+            responseData.setType("AllowCardIn");
+            responseData.setMessage("允许进卡失败:"+ throwable.getMessage());
+            object = responseData;
         } finally {
-
             return object;
-
         }
+    }
+
+    @JmsListener(destination = "ClientSend1")
+    public void receiveMsg(String text) {
+        System.out.println("接收到消息 : "+text);
     }
 }
