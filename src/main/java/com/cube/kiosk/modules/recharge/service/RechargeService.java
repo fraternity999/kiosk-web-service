@@ -23,6 +23,27 @@ public interface RechargeService {
     void getConsumer0rder(String tradeNo, RechargeLinstener linstener);
 
     /**
+     * 关闭订单
+     * @param tradeNo：支付订单号
+     * @param linstener
+     */
+    void closeOrder(String tradeNo, RechargeLinstener linstener);
+
+    /**
+     * 申请退款
+     * @param tradeNo:支付订单号
+     * @param vfTradeNo
+     * @param linstener
+     */
+    void applyForRefund(String tradeNo, String vfTradeNo, RechargeLinstener linstener);
+
+    /**
+     * 查询退款订单
+     * @param vfTradeNo
+     * @param linstener
+     */
+    void getApplyForRefund(String vfTradeNo, RechargeLinstener linstener);
+    /**
      * 查询门诊患者基本信息
      * @param cardId
      * @return

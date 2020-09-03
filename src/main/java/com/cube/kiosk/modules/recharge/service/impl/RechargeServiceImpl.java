@@ -40,6 +40,31 @@ public class RechargeServiceImpl implements RechargeService {
      */
     @Override
     public void getConsumer0rder(String tradeNo, RechargeLinstener linstener){
+        System.out.println("接口调用getConsumer0rder");
+        Map<String,Object> map = Maps.newHashMap();
+        map.put("tradeNo", tradeNo);//支付订单号
+        try{
+            String result = HttpsUtils.doPost("http://127.0.0.1:8090/comlink-interface-abc-forward/comlink/pay", map);
+            //Gson gson = new Gson();
+           // ResultData<ResponseBank> responseBankResultData = gson.fromJson(result, new TypeToken<ResponseBank>(){}.getType());
+            //if("00".equals(responseBankResultData.getResponseData().getRespCode())){
+            if("00".equals("01")){
+                linstener.success("");
+            }else{
+                linstener.error("");
+            }
+        }catch (Exception e){
+            linstener.exception(e.getMessage());
+        }
+    }
+
+    /**
+     * 关闭订单
+     * @param tradeNo：支付订单号
+     * @param linstener
+     */
+    @Override
+    public void closeOrder(String tradeNo, RechargeLinstener linstener) {
         Map<String,Object> map = Maps.newHashMap();
         map.put("tradeNo", tradeNo);//支付订单号
         try{
@@ -47,8 +72,40 @@ public class RechargeServiceImpl implements RechargeService {
         }catch (Exception e){
             linstener.exception(e.getMessage());
         }
+    }
 
+    /**
+     * 申请退款
+     * @param tradeNo:支付订单号
+     * @param vfTradeNo
+     * @param linstener
+     */
+    @Override
+    public void applyForRefund(String tradeNo, String vfTradeNo, RechargeLinstener linstener) {
+        Map<String,Object> map = Maps.newHashMap();
+        map.put("tradeNo", tradeNo);//支付订单号
+        map.put("vfTradeNo", vfTradeNo);
+        try{
+            String result = HttpsUtils.doPost("http://127.0.0.1:8090/comlink-interface-abc-forward/comlink/pay", map);
+        }catch (Exception e){
+            linstener.exception(e.getMessage());
+        }
+    }
 
+    /**
+     * 查询退款
+     * @param vfTradeNo
+     * @param linstener
+     */
+    @Override
+    public void getApplyForRefund(String vfTradeNo, RechargeLinstener linstener) {
+        Map<String,Object> map = Maps.newHashMap();
+        map.put("vfTradeNo", vfTradeNo);
+        try{
+            String result = HttpsUtils.doPost("http://127.0.0.1:8090/comlink-interface-abc-forward/comlink/pay", map);
+        }catch (Exception e){
+            linstener.exception(e.getMessage());
+        }
     }
 
     /**
