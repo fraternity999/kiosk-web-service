@@ -3,20 +3,29 @@
 spring:
   application:
     name: kiosk
-#  activemq:
-#    broker-url: tcp://127.0.0.1:61616
-#    user: admin
-#    password: admin
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/message?serverTimezone=UTC
+    username: root
+    password: root
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
 server:
-  port: 8099
+  port: 8080
 logging:
   file:
     path: ./logs
 
 neofaith:
-  url: https://wit120.neofaith.net:18443/services/his/
+  url: http://14.116.207.43:8062/services/
+
+
+
+
 
 
 app-pay:
-
-
