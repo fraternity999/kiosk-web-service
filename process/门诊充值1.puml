@@ -1,35 +1,38 @@
 @startuml
 :充值;
-:允许进卡;
-if (是否有卡?) then (有)
-    if (移动到射频卡位?) then (成功)
-      :读卡;
-    else (失败)
-      :返回消息;
-      stop
+if(允许进卡) then(成功)
+    if (是否有卡?) then (有卡)
+        if (移动到射频卡位?) then (移动成功)
+            if(读卡) then(读卡成功)
+
+            if(调用his患者信息接口/卡信息接口) then (查询患者信息成功)
+                :用户选择充值类型;
+                :用户输入充值金额;
+                if (调用银行交易接口) then (成功)
+                :返回交易信息(二维码);
+                else(失败)
+                :返回消息;
+                endif
+                end
+            else(查询患者信息失败)
+                :返回消息;
+            endif
+                end
+
+            else(读卡失败)
+                :返回消息;
+            endif
+                end
+        else (移动失败)
+        :返回消息;
+        stop
+        endif
+    else (无卡)
+    :返回消息;
+        stop
     endif
-else (无)
-:返回消息;
-stop
-endif
-:调用his患者信息接口/卡信息接口;
-end
-
-:用户选择充值类型;
-:用户输入充值金额;
-if (调用银行交易接口) then (成功)
-:返回交易信息(二维码);
-else(失败)
+else(允许进卡失败)
 :返回消息;
 endif
-end
-
-:用户扫描二维码支付，点击确定;
-if(调用银行交易结果查询接口) then(成功)
-:调用his充值接口;
-else(失败)
-:调用银行退费接口;
-endif
-:返回消息;
 end
 @enduml

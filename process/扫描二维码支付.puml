@@ -1,0 +1,19 @@
+@startuml
+:用户扫描二维码支付，点击确定;
+if(调用银行交易结果查询接口) then(成功)
+    if(调用his充值接口) then(his充值成功)
+        if(调用打印机) then(打印成功)
+            :返回消息;
+        else(打印失败)
+            :返回消息;
+        endif
+            end
+    else(his充值失败)
+        :返回消息;
+    endif
+        end
+else(失败)
+    :调用银行退费接口(暂时返回消息);
+endif
+    end
+@enduml
