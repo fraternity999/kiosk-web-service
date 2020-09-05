@@ -28,8 +28,8 @@ public class RechargeController {
     @Autowired
     private RechargeService rechargeService;
 
-//    @AllowCardIn
-//    @CheckCard
+    @AllowCardIn
+    @CheckCard
 //    @MoveCard
 //    @ReadCard
     @RequestMapping("index")

@@ -4,11 +4,14 @@ import com.cube.core.common.utils.IpUtil;
 import com.cube.kiosk.modules.common.ResponseData;
 import com.cube.kiosk.modules.common.ResponseDatabase;
 import com.cube.kiosk.modules.hardware.utils.RestTemplateUtil;
+import com.cube.kiosk.socket.SocketUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import java.net.Socket;
 
 /**
  * 检测是否有卡
@@ -19,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Order(2)
 public class CheckCardAop {
 
-    private String inPutParam = "<invoke name=\" READCARDTESTINSERTCARD \">\n" +
+    private String inPutParam = "<invoke name=\"READCARDTESTINSERTCARD\">\n" +
             "<arguments>\n" +
             "</arguments>\n" +
             "</invoke>";
@@ -28,11 +31,10 @@ public class CheckCardAop {
     public Object doBefore(ProceedingJoinPoint proceedingJoinPoint){
         Object object = null;
         String ip = IpUtil.getRemoteAddr(proceedingJoinPoint);
-        if("127.0.0.1".equalsIgnoreCase(ip)){
-            ip = "localhost";
-        }
         try {
-            String result = RestTemplateUtil.post(ip,inPutParam);
+            Socket socket = SocketUtils.sendMessage("127.0.0.1",8899,inPutParam);
+            String result = SocketUtils.reciveMessage(socket);
+            //1:有卡,0:无卡
             if(result.indexOf("1")>0){
                 object = proceedingJoinPoint.proceed();
             }else{

@@ -38,7 +38,7 @@ public class AllowCardInAop {
         Object object = null;
         try{
             String ip = IpUtil.getRemoteAddr(proceedingJoinPoint);
-            Socket socket = SocketUtils.sendMessage("127.0.0.1",8888,inPutParam);
+            Socket socket = SocketUtils.sendMessage("127.0.0.1",8899,inPutParam);
             result = SocketUtils.reciveMessage(socket);
             if(result.indexOf("SUCCESS")>0){
                 object = proceedingJoinPoint.proceed();

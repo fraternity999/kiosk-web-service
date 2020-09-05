@@ -28,7 +28,9 @@ public class SocketUtils {
     public static String reciveMessage(Socket socket) throws IOException {
         DataInputStream inputStream = new DataInputStream(socket.getInputStream());
         String content = "";
-        while (inputStream.available()!=0){
+        while (content.indexOf("/return")<0){
+
+
             byte[] buff = new byte[1024];
             inputStream.read(buff);
             String buffer = new String(buff, "utf-8");
