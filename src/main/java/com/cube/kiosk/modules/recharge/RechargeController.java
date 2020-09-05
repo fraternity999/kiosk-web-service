@@ -63,14 +63,14 @@ public class RechargeController {
                 public void error(Object object) {
                     responseData.setCode(500);
                     responseData.setData(null);
-                    responseData.setMessage("查询患者信息失败");
+                    responseData.setMessage(object.toString());
                 }
 
                 @Override
                 public void exception(Object object) {
                     responseData.setCode(500);
                     responseData.setData(null);
-                    responseData.setMessage("查询患者信息失败");
+                    responseData.setMessage(object.toString());
                 }
             });
         } catch (Exception e) {
