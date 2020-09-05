@@ -1,15 +1,14 @@
 package com.cube.kiosk.modules.hardware;
 
+import com.cube.core.common.utils.IpUtil;
 import com.cube.kiosk.activemq.Producer;
 import com.cube.kiosk.modules.common.ResponseData;
 import com.cube.kiosk.modules.common.ResponseDatabase;
-import com.cube.kiosk.modules.hardware.utils.IpUtil;
 import com.cube.kiosk.socket.SocketUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;

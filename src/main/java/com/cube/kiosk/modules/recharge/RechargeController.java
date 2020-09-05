@@ -1,5 +1,6 @@
 package com.cube.kiosk.modules.recharge;
 
+import com.cube.core.system.annotation.SysLog;
 import com.cube.kiosk.modules.common.ResponseBank;
 import com.cube.kiosk.modules.common.ResponseData;
 import com.cube.kiosk.modules.common.ResponseDatabase;
@@ -27,27 +28,34 @@ public class RechargeController {
     @Autowired
     private RechargeService rechargeService;
 
-    @AllowCardIn
-    @CheckCard
-    @MoveCard
-    @ReadCard
+//    @AllowCardIn
+//    @CheckCard
+//    @MoveCard
+//    @ReadCard
     @RequestMapping("index")
+    @SysLog("门诊预存")
     public ResponseData<PatientInfo> index(String cardId, HttpServletRequest request){
         String result = null;
         ResponseData<PatientInfo> responseData = ResponseDatabase.newResponseData();
         try {
             //查询患者信息
             result = rechargeService.getPatientnameInfo(cardId);
-
             Gson gson = new Gson();
-            ResultData<PatientInfo> patientInfoResultData = gson.fromJson(result, new TypeToken<ResultData<PatientInfo>>(){}.getType());
+            ResultData<Object> patientInfoResultData = gson.fromJson(result, new TypeToken<ResultData<Object>>(){}.getType());
+            if(patientInfoResultData.getCode()==1){
+                responseData.setCode(500);
+                responseData.setData(null);
+                responseData.setMessage(patientInfoResultData.getResponseData().toString());
+                return responseData;
+            }
+            PatientInfo patientInfo = (PatientInfo) patientInfoResultData.getResponseData();
             //查询卡余额 Patientname:患者形象;  就诊卡号
-            rechargeService.getBalance(patientInfoResultData.getResponseData().getPatientname(), null, new RechargeLinstener() {
+            rechargeService.getBalance(patientInfo.getPatientname(), null, new RechargeLinstener() {
                 @Override
                 public void success(Object object) {
-                    patientInfoResultData.getResponseData().setBalance((Double)object);
+                    patientInfo.setBalance((Double)object);
                     responseData.setCode(200);
-                    responseData.setData(patientInfoResultData.getResponseData());
+                    responseData.setData((PatientInfo) patientInfoResultData.getResponseData());
                     responseData.setMessage("成功");
                 }
 

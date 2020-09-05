@@ -17,9 +17,8 @@ public class HttpsUtils {
     public static String doPost(String url, Map<String,Object> result) throws Exception {
         String charset = "utf-8";
         SSLClient sslClient = new SSLClient();
-        String token = "1514c1367ae748349f31de28aef9b1ca";
-        String hosId = "46c0cd66b25b4da8acbab30bd501a64c";
-        String spellNo = "am";
+        String token = "48616468f12748e3a26e1af4e793ec4b";
+        String hosId = "f27fc323ba174cb9b4d1c6e062a4ae34";
         Map<String,Object> requestJson = Maps.newHashMap();
         result.put("token", token);
         result.put("hosId", hosId);

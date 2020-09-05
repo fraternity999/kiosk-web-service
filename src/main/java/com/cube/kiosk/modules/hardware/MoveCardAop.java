@@ -1,16 +1,14 @@
 package com.cube.kiosk.modules.hardware;
 
+import com.cube.core.common.utils.IpUtil;
 import com.cube.kiosk.modules.common.ResponseData;
 import com.cube.kiosk.modules.common.ResponseDatabase;
-import com.cube.kiosk.modules.common.model.PatientInfo;
-import com.cube.kiosk.modules.hardware.utils.IpUtil;
 import com.cube.kiosk.modules.hardware.utils.RestTemplateUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * 移动卡
