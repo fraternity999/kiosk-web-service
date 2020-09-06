@@ -8,15 +8,6 @@ import lombok.Data;
  */
 @Data
 public class PatientInfo {
-
-
-
-
-
-
-
-
-
     @SerializedName("patientname")
     private String name;
 
@@ -75,4 +66,6 @@ public class PatientInfo {
     private String  inhosTimes;//住院次数
     private String  officebedId;//科床号
     private String  doctorName;//主治医师
+    private String  cardTypeName;//卡类型名称
+    private String  patienttype;
 }

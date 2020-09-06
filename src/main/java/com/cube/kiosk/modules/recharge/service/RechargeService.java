@@ -15,12 +15,20 @@ public interface RechargeService {
     String getQrCode(Double money) throws Exception;
 
     /**
-     * 查询消费订单
+     * 查询消费订单-就诊卡充值
      * @param tradeNo ：支付订单号
      * @return
      * @throws Exception
      */
-    void getConsumer0rder(String tradeNo, RechargeLinstener linstener);
+    void getConsumer0rderCard(String tradeNo, RechargeLinstener linstener);
+
+    /**
+     * 查询消费订单-住院预交金
+     * @param tradeNo ：支付订单号
+     * @return
+     * @throws Exception
+     */
+    void getConsumer0rderPaymen(String tradeNo, RechargeLinstener linstener);
 
     /**
      * 关闭订单

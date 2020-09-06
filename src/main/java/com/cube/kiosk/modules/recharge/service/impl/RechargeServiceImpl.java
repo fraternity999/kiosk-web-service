@@ -5,14 +5,18 @@ import com.cube.kiosk.modules.common.ResponseBank;
 import com.cube.kiosk.modules.common.ResultData;
 import com.cube.kiosk.modules.common.model.PatientInfo;
 import com.cube.kiosk.modules.common.utils.RestTemplateUtil;
+import com.cube.kiosk.modules.pay.entity.TransactionRecordDO;
 import com.cube.kiosk.modules.recharge.linstener.RechargeLinstener;
 import com.cube.kiosk.modules.recharge.service.RechargeService;
+import com.cube.kiosk.modules.recharge.service.TransactionRepository;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -24,6 +28,9 @@ public class RechargeServiceImpl implements RechargeService {
     @Value("${neofaith.url}")
     private String url;
 
+    @Autowired
+    private TransactionRepository transactionRepository;
+
     @Override
     public String getQrCode(Double money) throws Exception {
 
@@ -32,14 +39,13 @@ public class RechargeServiceImpl implements RechargeService {
     }
 
     /**
-     * 查询消费订单
-     *
+     * 查询消费订单-就诊卡充值
      * @param tradeNo ：支付订单号
      * @return
      * @throws Exception
      */
     @Override
-    public void getConsumer0rder(String tradeNo, RechargeLinstener linstener){
+    public void getConsumer0rderCard(String tradeNo, RechargeLinstener linstener){
         System.out.println("接口调用getConsumer0rder");
         Map<String,Object> map = Maps.newHashMap();
         map.put("tradeNo", tradeNo);//支付订单号
@@ -47,6 +53,32 @@ public class RechargeServiceImpl implements RechargeService {
             String result = HttpsUtils.doPost("http://127.0.0.1:8090/comlink-interface-abc-forward/comlink/pay", map);
             //Gson gson = new Gson();
            // ResultData<ResponseBank> responseBankResultData = gson.fromJson(result, new TypeToken<ResponseBank>(){}.getType());
+            //if("00".equals(responseBankResultData.getResponseData().getRespCode())){
+            if("00".equals("01")){
+                linstener.success("");
+            }else{
+                linstener.error("");
+            }
+        }catch (Exception e){
+            linstener.exception(e.getMessage());
+        }
+    }
+
+    /**
+     * 查询消费订单-住院预交金
+     * @param tradeNo ：支付订单号
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public void getConsumer0rderPaymen(String tradeNo, RechargeLinstener linstener) {
+        System.out.println("接口调用getConsumer0rder");
+        Map<String,Object> map = Maps.newHashMap();
+        map.put("tradeNo", tradeNo);//支付订单号
+        try{
+            String result = HttpsUtils.doPost("http://127.0.0.1:8090/comlink-interface-abc-forward/comlink/pay", map);
+            //Gson gson = new Gson();
+            // ResultData<ResponseBank> responseBankResultData = gson.fromJson(result, new TypeToken<ResponseBank>(){}.getType());
             //if("00".equals(responseBankResultData.getResponseData().getRespCode())){
             if("00".equals("01")){
                 linstener.success("");
@@ -198,6 +230,15 @@ public class RechargeServiceImpl implements RechargeService {
             }else {
                 linstener.error("HIS卡充值失败！请联系管理员");
             }
+
+            //消费订单HIS状态记录
+            TransactionRecordDO tRDO = new TransactionRecordDO();
+            tRDO.setId("");//支付id
+            tRDO.setHisCode(patientInfoResultData.getCode()); //his响应状态0 成功,1 失败,2 结果为空
+            tRDO.setHisMsg("");//his响应结果描述
+            tRDO.setHisSerialNumber(patientInfoResultData.getResponseData().getHisSerialNumber());//his交易流水号
+            tRDO.setHisDate(new Date());//his交易时间
+            transactionRepository.save(tRDO);//记录日志
         }catch (Exception e){
             linstener.exception(e.getMessage());
         }
@@ -273,6 +314,17 @@ public class RechargeServiceImpl implements RechargeService {
             }else {
                 linstener.error("HIS卡充值失败！请联系管理员");
             }
+
+            ////记录支付日志-TRANSACTION_RECORD
+            //消费订单HIS状态记录
+            TransactionRecordDO tRDO = new TransactionRecordDO();
+            tRDO.setId("");//支付id
+            tRDO.setHisCode(patientInfoResultData.getCode()); //his响应状态0 成功,1 失败,2 结果为空
+            tRDO.setHisMsg("");//his响应结果描述
+            tRDO.setHisSerialNumber(patientInfoResultData.getResponseData().getHisSerialNumber());//his交易流水号
+            tRDO.setHisDate(new Date());//his交易时间
+            transactionRepository.save(tRDO);
+
         }catch (Exception e){
             linstener.exception(e.getMessage());
         }
