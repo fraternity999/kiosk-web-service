@@ -1,5 +1,7 @@
 package com.cube.kiosk.socket;
 
+import com.cube.kiosk.modules.hardware.utils.StringUtil;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -36,6 +38,7 @@ public class SocketUtils {
             String buffer = new String(buff, "utf-8");
             content += buffer;
         }
+         content = StringUtil.trimnull(content);
         return content;
     }
 }

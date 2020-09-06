@@ -3,6 +3,7 @@ package com.cube.kiosk.modules.hardware;
 import com.cube.core.common.utils.IpUtil;
 import com.cube.kiosk.modules.common.ResponseData;
 import com.cube.kiosk.modules.common.ResponseDatabase;
+import com.cube.kiosk.socket.SocketUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -10,10 +11,12 @@ import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.net.Socket;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,6 +24,12 @@ import java.util.List;
 @Aspect
 @Order(4)
 public class ReadCardAop {
+
+    @Value("${Hardware.socketIp}")
+    private String socketIp;
+
+    @Value("${Hardware.scoketPort}")
+    private int socketPort;
 
     private String inPutParam = "<invoke name=\" READCARDREADRFCARD \">\n" +
             "<arguments>\n" +
@@ -35,17 +44,9 @@ public class ReadCardAop {
         String cardNo = "";
         Object object = null;
         String ip = IpUtil.getRemoteAddr(proceedingJoinPoint);
-        if("127.0.0.1".equalsIgnoreCase(ip)){
-            ip = "localhost";
-        }
         try {
-//            String result = RestTemplateUtil.post(ip,inPutParam);
-            String result = "<return name=\" READCARDREADRFCARD \">\n" +
-                    "<arguments>\n" +
-                    "<string id=\"ERROR\">SUCCESS</string>\n" +
-                    "<string id=\"CARDNO\">12345678</string>\n" +
-                    "</arguments>\n" +
-                    "</return>";
+            Socket socket = SocketUtils.sendMessage(socketIp,socketPort,inPutParam);
+            String result = SocketUtils.reciveMessage(socket);
             Document doc = null;
             doc = DocumentHelper.parseText(result);
             Element root = doc.getRootElement();// 指向根节点
@@ -78,6 +79,7 @@ public class ReadCardAop {
                 }
 
             }
+            System.out.println("读取到卡号："+cardNo);
             if(StringUtils.isEmpty(cardNo)){
                 ResponseData responseData = ResponseDatabase.newResponseData();
                 responseData.setCode(500);

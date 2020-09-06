@@ -30,8 +30,8 @@ public class RechargeController {
 
     @AllowCardIn
     @CheckCard
-//    @MoveCard
-//    @ReadCard
+    @MoveCard
+    @ReadCard
     @RequestMapping("index")
     @SysLog("门诊预存")
     public ResponseData<PatientInfo> index(String cardId, HttpServletRequest request){

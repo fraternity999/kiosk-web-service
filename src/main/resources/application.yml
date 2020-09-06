@@ -29,7 +29,9 @@ neofaith:
   url: http://14.116.207.43:8062/services/
 
 
-
+Hardware:
+  socketIp: 127.0.0.1
+  scoketPort: 8899
 
 
 

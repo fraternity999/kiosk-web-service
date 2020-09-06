@@ -9,6 +9,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
@@ -20,11 +21,11 @@ import java.net.Socket;
 @Order(1)
 public class AllowCardInAop {
 
+    @Value("${Hardware.socketIp}")
+    private String socketIp;
 
-
-
-    @Autowired
-    private Producer producer;
+    @Value("${Hardware.scoketPort}")
+    private int socketPort;
 
     private String inPutParam = "<invoke name=\" READCARDALLOWCARDIN \">" +
             "<arguments>" +
@@ -38,7 +39,7 @@ public class AllowCardInAop {
         Object object = null;
         try{
             String ip = IpUtil.getRemoteAddr(proceedingJoinPoint);
-            Socket socket = SocketUtils.sendMessage("127.0.0.1",8899,inPutParam);
+            Socket socket = SocketUtils.sendMessage(socketIp,socketPort,inPutParam);
             result = SocketUtils.reciveMessage(socket);
             if(result.indexOf("SUCCESS")>0){
                 object = proceedingJoinPoint.proceed();

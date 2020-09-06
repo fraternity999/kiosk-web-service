@@ -8,6 +8,7 @@ import com.cube.kiosk.socket.SocketUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,12 @@ import java.net.Socket;
 @Order(3)
 public class MoveCardAop {
 
+    @Value("${Hardware.socketIp}")
+    private String socketIp;
+
+    @Value("${Hardware.scoketPort}")
+    private int socketPort;
+
     private String inPutParam = "<invoke name=\"READCARDMOVECARDTORF\">\n" +
             "<arguments>\n" +
             "</arguments>\n" +
@@ -33,7 +40,7 @@ public class MoveCardAop {
         Object object = null;
         String ip = IpUtil.getRemoteAddr(proceedingJoinPoint);
         try {
-            Socket socket = SocketUtils.sendMessage("127.0.0.1",8899,inPutParam);
+            Socket socket = SocketUtils.sendMessage(socketIp,socketPort,inPutParam);
             String result = SocketUtils.reciveMessage(socket);
             if(result.indexOf("SUCCESS")>0){
                 object = proceedingJoinPoint.proceed();
