@@ -45,4 +45,6 @@ public class RequestDataPay {
      * 终端号
      */
     private String tid;
+
+    private String requestIp;
 }
